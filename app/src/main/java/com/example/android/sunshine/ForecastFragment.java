@@ -35,6 +35,8 @@ import java.util.List;
  */
 public class ForecastFragment extends Fragment {
 
+    private ArrayAdapter<String> mForecastAdapter;
+
     public ForecastFragment() {
     }
 
@@ -80,15 +82,12 @@ public class ForecastFragment extends Fragment {
                 Arrays.asList(forecastArray)
         );
 
-        ArrayAdapter<String> mForecastAdapter = new ArrayAdapter<String>(
-                //Contexto actual
-                getActivity(),
-                //Id del layout de la lista
-                R.layout.list_item_forecast,
-                //Id del textview para el listado
-                R.id.list_item_forecast_textview,
-                //Datos
-                weekForecast
+        mForecastAdapter =
+                new ArrayAdapter<String>(
+                    getActivity(), //Contexto actual
+                    R.layout.list_item_forecast, //Id del layout de la lista
+                    R.id.list_item_forecast_textview, //Id del textview para el listado
+                    weekForecast //Datos
         );
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
@@ -169,10 +168,6 @@ public class ForecastFragment extends Fragment {
                 highAndLow = formatHighLows(high, low);
                 resultStr[i] = day + " - " + description + " - " + highAndLow;
             }
-
-            for (String s : resultStr){
-                Log.v(LOG_TAG, "Forecast Entry: " + s);
-            }
             return resultStr;
         }
 
@@ -211,8 +206,6 @@ public class ForecastFragment extends Fragment {
                         .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
                         .build();
 
-                Log.v(LOG_TAG, "Built URI " + builtUri.toString());
-
                 URL url = new URL(builtUri.toString());
                 //Crear la peticion a OpenWeatherMap y abrir la conexion
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -242,7 +235,6 @@ public class ForecastFragment extends Fragment {
                 }
                 forecastJsonStr = buffer.toString();
 
-                Log.v(LOG_TAG, "Forecast JSON String: " + forecastJsonStr);
             }catch (IOException e){
                 Log.e(LOG_TAG, "Error", e);
                 //Si no se consiguieron los datos del clima con exito no tiene caso analizarlo
@@ -268,6 +260,17 @@ public class ForecastFragment extends Fragment {
 
             //Esto solo ocurrira si hubo un error obteniendo o formateando el forecast
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(String[] result) {
+            if (result != null){
+                mForecastAdapter.clear();
+                for (String dayForecastStr : result){
+                    mForecastAdapter.add(dayForecastStr);
+                }
+                //Nuevos datos vienen desde el servidor
+            }
         }
     }
 }
