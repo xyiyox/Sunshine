@@ -141,8 +141,8 @@ public class ForecastFragment extends Fragment {
             JSONObject forecastJson = new JSONObject(forecastJsonStr);
             JSONArray weatherArray = forecastJson.getJSONArray(OWN_LIST);
 
-            String[] resultStr = new String[numDays];
-            for (int i = 0; i < resultStr.length; i++){
+            String[] resultStr = new String[weatherArray.length()];
+            for (int i = 0; i < weatherArray.length(); i++){
                 //Por ahora, usaremos el formato "Dia, descripcion, high/low"
                 String day;
                 String description;
@@ -234,6 +234,7 @@ public class ForecastFragment extends Fragment {
                     return null;
                 }
                 forecastJsonStr = buffer.toString();
+                Log.v(LOG_TAG, "La Url formada: " + forecastJsonStr);
 
             }catch (IOException e){
                 Log.e(LOG_TAG, "Error", e);
