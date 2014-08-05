@@ -3,9 +3,17 @@
 
     <string name="app_name">Sunshine</string>
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Configuraciones</string>
+    <string name="action_settings">Opciones</string>
     <string name="action_refresh" translatable="false">Actualizar</string>
     <string name="title_activity_detail">DetailActivity</string>
     <string name="title_activity_settings">Configuraciones</string>
+
+    <!-- Label para la preferencia de la localizacion [CHAR LIMIT=30] -->
+    <string name="pref_location_label">Location</string>
+    <!-- Nombre de la llave (key) para almacenar la localizacion en SharedPreferences
+        [CHAR LIMIT=NONE] -->
+    <string name="pref_location_key" translatable="false">location</string>
+    <!-- Nombre de la ciudad por defecto que sera localizada [CHAR LIMIT=NONE] -->
+    <string name="pref_location_default" translatable="false">Armenia</string>
 
 </resources>
