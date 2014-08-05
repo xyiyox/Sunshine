@@ -31,9 +31,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -61,41 +59,38 @@ public class ForecastFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_refresh){
-            FetchWeatherTask weatherTask = new FetchWeatherTask();
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            String location = prefs.getString(getString(R.string.pref_location_key),
-                    getString(R.string.pref_location_default));
-            weatherTask.execute(location);
+            updateWeather();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void updateWeather() {
+        FetchWeatherTask weatherTask = new FetchWeatherTask();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String location = prefs.getString(getString(R.string.pref_location_key),
+                getString(R.string.pref_location_default));
+        weatherTask.execute(location);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateWeather();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        //Datos de prueba para el ListView.
-        //Representados como "dia, clima, high/low"
-        String[] forecastArray = {
-                "Lunes - Soleado - 88/63 ",
-                "Martes - Neblina - 70/40",
-                "Miercoles - Nublado - 72/63",
-                "Jueves - Asteroides - 75/65",
-                "Viernes - Lluvia Fuerte - 65/56",
-                "Sabado - AYUDA...ATRAPADO EN ESTACION DEL CLIMA - 60/51",
-                "Domingo - Soleado - 80/68"
-        };
-        List<String> weekForecast = new ArrayList<String>(
-                Arrays.asList(forecastArray)
-        );
-
+        //El adaptador va a tomar los datos desde una fuente y los usara
+        //para llenar el ListView asociado a el
         mForecastAdapter =
                 new ArrayAdapter<String>(
                     getActivity(), //Contexto actual
                     R.layout.list_item_forecast, //Id del layout de la lista
                     R.id.list_item_forecast_textview, //Id del textview para el listado
-                    weekForecast //Datos
+                    new ArrayList<String>() //Datos
         );
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
