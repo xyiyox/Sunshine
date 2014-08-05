@@ -128,6 +128,22 @@ public class ForecastFragment extends Fragment {
          * Preparar los high/low del clima para la presentacion
          */
         private String formatHighLows(double high, double low){
+            //Los datos son mostrados en Celsius por defecto.
+            //Si un usuario prefiere verlos en Fahrenheit, convierte los valores aqui
+            //Vamos a hacer que en vez de traer los datos Fahrenheir directamente desde el
+            //servidor, el usuario pueda cambiarlo trayendo los datos una unica vez.
+            //Para eso almacenaremos los valores en una base de datos.
+            SharedPreferences sharedPrefs =
+                    PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String unitType = sharedPrefs.getString(
+                    getString(R.string.pref_units_key),
+                    getString(R.string.pref_units_metric));
+            if (unitType.equals(getString(R.string.pref_units_imperial))){
+                high = (high * 1.8) + 32;
+                low = (low * 1.8) + 32;
+            } else if ( !unitType.equals(getString(R.string.pref_units_metric))){
+                Log.d(LOG_TAG, "Unit type not found: " + unitType);
+            }
             long roundedHigh = Math.round(high);
             long roundedLow = Math.round(low);
 
