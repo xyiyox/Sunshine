@@ -16,9 +16,11 @@
     <!-- Nombre de la ciudad por defecto que sera localizada [CHAR LIMIT=NONE] -->
     <string name="pref_location_default" translatable="false">Armenia</string>
 
-    <string name="pref_units_label">Unidades</string>
+    <string name="pref_units_label">Unidades de Temperatura</string>
     <string name="pref_units_key" translatable="false">units</string>
     <string name="pref_units_metric">Metric</string>
     <string name="pref_units_imperial">Imperial</string>
+
+    <string name="action_map">Ubicación en Mapa</string>
 
 </resources>
