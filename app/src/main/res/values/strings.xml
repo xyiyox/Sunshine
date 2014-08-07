@@ -22,5 +22,6 @@
     <string name="pref_units_imperial">Imperial</string>
 
     <string name="action_map">Ubicación en Mapa</string>
+    <string name="action_share">Compartir</string>
 
 </resources>
