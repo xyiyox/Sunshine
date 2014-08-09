@@ -1,0 +1,76 @@
+package com.example.android.sunshine.data;
+
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
+import com.example.android.sunshine.data.WeatherContract.LocationEntry;
+
+/**
+ * Maneja una base de datos local para los datos del clima
+ */
+public class WeatherDbHelper extends SQLiteOpenHelper {
+
+    //Cambiando el esquema de base de datos se incrementa la version de la bd
+    private static final int DATABASE_VERSION = 1;
+
+    private static final String DATABASE_NAME = "weather.db";
+
+    public WeatherDbHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase sqLiteDatabase) {
+
+        //Crear una tabla para almacenar ubicaciones. Una ubicacion consiste de el String
+        //proporcionado en el menu de configuracion de la ubicacion, el nombre de la ciudad,
+        //y la latitud y longitud
+
+        final String SQL_CREATE_LOCATION_TABLE = "CREATE TABLE +" + LocationEntry.TABLE_NAME + " (" +
+                LocationEntry._ID + " INTEGER PRIMARY KEY," +
+                LocationEntry.COLUMN_LOCATION_SETTING + " TEXT UNIQUE NOT NULL, "+
+                LocationEntry.COLUMN_CITY_NAME + " TEXT NOT NULL, " +
+                LocationEntry.COLUMN_COORD_LAT + " REAL NOT NULL, " +
+                LocationEntry.COLUMN_COORD_LONG + " REAL NOT NULL" +
+                "UNIQUE (" + LocationEntry.COLUMN_LOCATION_SETTING + ") ON CONFLICT IGNORE);";
+
+        final String SQL_CREATE_WEATHER_TABLE = "CREATE TABLE " + WeatherEntry.TABLE_NAME + " (" +
+                //Las claves unicas son generadas automaticamente.
+                WeatherEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+
+                //El ID de la ubicacion asociada con los datos del clima
+                WeatherEntry.COLUMN_LOC_KEY + " INTEGER NOT NULL, " +
+                WeatherEntry.COLUMN_DATETEXT + " TEXT NOT NULL, " +
+                WeatherEntry.COLUMN_SHORT_DESC + " TEXT NOT NULL, " +
+                WeatherEntry.COLUMN_WEATHER_ID + " INTEGER NOT NULL, " +
+
+                WeatherEntry.COLUMN_MIN_TEMP + " REAL NOT NULL, " +
+                WeatherEntry.COLUMN_MAX_TEMP + " REAL NOT NULL, " +
+
+                WeatherEntry.COLUMN_HUMIDITY + " REAL NOT NULL, " +
+                WeatherEntry.COLUMN_PRESSURE + " REAL NOT NULL, " +
+                WeatherEntry.COLUMN_WIND_SPEED + " REAL NOT NULL, " +
+                WeatherEntry.COLUMN_DEGREES + " REAL NOT NULL, " +
+
+                //Configurar la columna de la ubicacion como una foreign key para localizar la tabla
+                " FOREIGN KEY (" + WeatherEntry.COLUMN_LOC_KEY + ") REFERENCES " +
+                LocationEntry.TABLE_NAME + " (" + LocationEntry._ID + "), " +
+
+                //Para asegurarse de que la aplicacion tenga solo una entrada de clima por dia
+                //y por ubicacion, es creada una UNIQUE constraint con estrategia de reemplazo
+                " UNIQUE (" + WeatherEntry.COLUMN_DATETEXT + ", " +
+                WeatherEntry.COLUMN_LOC_KEY + ") ON CONFLICT REPLACE);";
+
+        sqLiteDatabase.execSQL(SQL_CREATE_LOCATION_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_WEATHER_TABLE);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i2) {
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + LocationEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + WeatherEntry.TABLE_NAME);
+        onCreate(sqLiteDatabase);
+    }
+}

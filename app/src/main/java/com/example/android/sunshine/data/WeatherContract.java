@@ -17,6 +17,7 @@ public class WeatherContract {
         //Fecha almacenada como texto con formato yyyy-MM-dd
         public static final String COLUMN_DATETEXT = "date";
         //Weather id retornado por la API, para identificar el icono a ser usado
+        public static final String COLUMN_WEATHER_ID = "weather_id";
 
         //Descripcion corta y descripcion larga del clima, proveida por la API
         public static final String COLUMN_SHORT_DESC = "short_desc";
