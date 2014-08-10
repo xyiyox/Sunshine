@@ -13,9 +13,9 @@ import com.example.android.sunshine.data.WeatherContract.LocationEntry;
 public class WeatherDbHelper extends SQLiteOpenHelper {
 
     //Cambiando el esquema de base de datos se incrementa la version de la bd
-    private static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 1;
 
-    private static final String DATABASE_NAME = "weather.db";
+    public static final String DATABASE_NAME = "weather.db";
 
     public WeatherDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -28,13 +28,14 @@ public class WeatherDbHelper extends SQLiteOpenHelper {
         //proporcionado en el menu de configuracion de la ubicacion, el nombre de la ciudad,
         //y la latitud y longitud
 
-        final String SQL_CREATE_LOCATION_TABLE = "CREATE TABLE +" + LocationEntry.TABLE_NAME + " (" +
-                LocationEntry._ID + " INTEGER PRIMARY KEY," +
-                LocationEntry.COLUMN_LOCATION_SETTING + " TEXT UNIQUE NOT NULL, "+
+        final String SQL_CREATE_LOCATION_TABLE = "CREATE TABLE " + LocationEntry.TABLE_NAME + " (" +
+                LocationEntry._ID + " INTEGER PRIMARY KEY, " +
+                LocationEntry.COLUMN_LOCATION_SETTING + " TEXT UNIQUE NOT NULL, " +
                 LocationEntry.COLUMN_CITY_NAME + " TEXT NOT NULL, " +
                 LocationEntry.COLUMN_COORD_LAT + " REAL NOT NULL, " +
-                LocationEntry.COLUMN_COORD_LONG + " REAL NOT NULL" +
-                "UNIQUE (" + LocationEntry.COLUMN_LOCATION_SETTING + ") ON CONFLICT IGNORE);";
+                LocationEntry.COLUMN_COORD_LONG + " REAL NOT NULL, " +
+                "UNIQUE (" + LocationEntry.COLUMN_LOCATION_SETTING + ") ON CONFLICT IGNORE"+
+                " );";
 
         final String SQL_CREATE_WEATHER_TABLE = "CREATE TABLE " + WeatherEntry.TABLE_NAME + " (" +
                 //Las claves unicas son generadas automaticamente.
