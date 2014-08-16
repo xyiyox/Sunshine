@@ -21,6 +21,8 @@ public class TestProvider extends AndroidTestCase {
     }
 
     public static String TEST_CITY_NAME = "North Pole";
+    public static String TEST_LOCATION = "99705";
+    public static String TEST_DATE = "20141205";
 
     static ContentValues getLocationContentValues() {
 
@@ -64,10 +66,9 @@ public class TestProvider extends AndroidTestCase {
         valueCursor.close();
     }
 
-    public void testInsertReadDb() {
+    public void testInsertReadProvider() {
         //Prueba para los datos que se van a insertar en la BD
-        WeatherDbHelper dbHelper =
-                new WeatherDbHelper(mContext);
+        WeatherDbHelper dbHelper = new WeatherDbHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         //Crear un nuevo mapa de valores, donde los nombres de las columnas son las llaves
@@ -81,13 +82,11 @@ public class TestProvider extends AndroidTestCase {
         Log.d(LOG_TAG, "New row id: " + locationRowId);
 
         //Un cursor es tu interfaz primaria para los resultados de una query
-        Cursor cursor = db.query(
-                LocationEntry.TABLE_NAME,   //Tabla de la consulta
+        Cursor cursor = mContext.getContentResolver().query(
+                LocationEntry.buildLocationUri(locationRowId),   //Tabla de la consulta
                 null,
                 null,   //Columnas para la clausula "WHERE"
                 null,   //Valores para la clausula "WHERE"
-                null,   //Columnas para group by
-                null,   //Columnas para filtrar por row groups
                 null   //Ordenamiento
         );
 
@@ -101,15 +100,12 @@ public class TestProvider extends AndroidTestCase {
             weatherRowId = db.insert(WeatherEntry.TABLE_NAME, null, weatherValues);
             assertTrue(weatherRowId != -1);
 
-            //Un cursor es tu interfaz primaria para los resultados de una query
-            Cursor weatherCursor = db.query(
-                    WeatherEntry.TABLE_NAME,    //Tabla de la consulta
-                    null,   //Dejando las columnas en null se retornan todas las columnas
-                    null,   //Clausula WHERE
-                    null,   //Valores para la clausula WHERE
-                    null,   //Columnas del GROUP BY
-                    null,   //Columnas para filtrar por row groups
-                    null    //ordenamiento
+            Cursor weatherCursor = mContext.getContentResolver().query(
+                    WeatherEntry.CONTENT_URI,
+                    null,   //Dejando las columnas en null trae todas las columnas
+                    null,   //Columnas para la clausula Where
+                    null,   //Valores para la clausula Where
+                    null    //Ordenamiento
             );
 
             if (weatherCursor.moveToFirst()) {
@@ -117,6 +113,55 @@ public class TestProvider extends AndroidTestCase {
             } else {
                 fail("No se devolvieron datos climaticos!");
             }
+
+            weatherCursor.close();
+
+            weatherCursor = mContext.getContentResolver().query(
+                    WeatherEntry.buildWeatherLocation(TEST_LOCATION),
+                    null,   //Dejando las columnas en null trae todas las columnas
+                    null,   //Columnas para la clausula Where
+                    null,   //Valores para la clausula Where
+                    null    //Ordenamiento
+            );
+
+            if (weatherCursor.moveToFirst()) {
+                validateCursor(weatherValues, weatherCursor);
+            } else {
+                fail("No se devolvieron datos climaticos!");
+            }
+
+            weatherCursor.close();
+
+            weatherCursor = mContext.getContentResolver().query(
+                    WeatherEntry.buildWeatherLocationWithStartDate(TEST_LOCATION, TEST_DATE),
+                    null,   //Dejando las columnas en null trae todas las columnas
+                    null,   //Columnas para la clausula Where
+                    null,   //Valores para la clausula Where
+                    null    //Ordenamiento
+            );
+
+            if (weatherCursor.moveToFirst()) {
+                validateCursor(weatherValues, weatherCursor);
+            } else {
+                fail("No se devolvieron datos climaticos!");
+            }
+
+            weatherCursor.close();
+
+            weatherCursor = mContext.getContentResolver().query(
+                    WeatherEntry.buildWeatherLocationWithDate(TEST_LOCATION, TEST_DATE),
+                    null,   //Dejando las columnas en null trae todas las columnas
+                    null,   //Columnas para la clausula Where
+                    null,   //Valores para la clausula Where
+                    null    //Ordenamiento
+            );
+
+            if (weatherCursor.moveToFirst()) {
+                validateCursor(weatherValues, weatherCursor);
+            } else {
+                fail("No se devolvieron datos climaticos!");
+            }
+
             dbHelper.close();
         } else {
             fail("No se retornaron valores =(");
