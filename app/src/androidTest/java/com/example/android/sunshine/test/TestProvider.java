@@ -1,8 +1,10 @@
 package com.example.android.sunshine.test;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
@@ -96,9 +98,8 @@ public class TestProvider extends AndroidTestCase {
             //Ahora que ya tenemos datos falsos de una localizacion, es hora de agregar datos
             //falsos para un clima
             ContentValues weatherValues = getWeatherContentValues(locationRowId);
-            long weatherRowId;
-            weatherRowId = db.insert(WeatherEntry.TABLE_NAME, null, weatherValues);
-            assertTrue(weatherRowId != -1);
+            Uri insertUri = mContext.getContentResolver().insert(WeatherEntry.CONTENT_URI, weatherValues);
+            long weatherRowId = ContentUris.parseId(insertUri);
 
             Cursor weatherCursor = mContext.getContentResolver().query(
                     WeatherEntry.CONTENT_URI,
