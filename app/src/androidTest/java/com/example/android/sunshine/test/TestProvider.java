@@ -69,15 +69,12 @@ public class TestProvider extends AndroidTestCase {
     }
 
     public void testInsertReadProvider() {
-        //Prueba para los datos que se van a insertar en la BD
-        WeatherDbHelper dbHelper = new WeatherDbHelper(mContext);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         //Crear un nuevo mapa de valores, donde los nombres de las columnas son las llaves
         ContentValues values = getLocationContentValues();
 
-        long locationRowId;
-        locationRowId = db.insert(LocationEntry.TABLE_NAME, null, values);
+        Uri locationUri = mContext.getContentResolver().insert(LocationEntry.CONTENT_URI, values);
+        long locationRowId = ContentUris.parseId(locationUri);
 
         //Verificamos que tenemos una fila de regreso
         assertTrue(locationRowId != -1);
@@ -163,7 +160,6 @@ public class TestProvider extends AndroidTestCase {
                 fail("No se devolvieron datos climaticos!");
             }
 
-            dbHelper.close();
         } else {
             fail("No se retornaron valores =(");
         }
