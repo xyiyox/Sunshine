@@ -3,24 +3,18 @@ package com.example.android.sunshine.test;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
 import com.example.android.sunshine.data.WeatherContract.LocationEntry;
 import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
-import com.example.android.sunshine.data.WeatherDbHelper;
 
 import java.util.Map;
 import java.util.Set;
 
 public class TestProvider extends AndroidTestCase {
     public static final String LOG_TAG = TestProvider.class.getSimpleName();
-
-    public void testDeleteDb() throws Throwable {
-        mContext.deleteDatabase(WeatherDbHelper.DATABASE_NAME);
-    }
 
     public static String TEST_CITY_NAME = "North Pole";
     public static String TEST_LOCATION = "99705";
@@ -163,6 +157,76 @@ public class TestProvider extends AndroidTestCase {
         } else {
             fail("No se retornaron valores =(");
         }
+    }
+
+    //Devuelve nuestra base de datos a un estado vacio
+    public void testDeleteAllRecords() {
+        mContext.getContentResolver().delete(
+                WeatherEntry.CONTENT_URI,
+                null,
+                null
+        );
+        mContext.getContentResolver().delete(
+                LocationEntry.CONTENT_URI,
+                null,
+                null
+        );
+
+        Cursor cursor = mContext.getContentResolver().query(
+                WeatherEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+        assertEquals(0, cursor.getCount());
+        cursor.close();
+
+        cursor = mContext.getContentResolver().query(
+                LocationEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+        assertEquals(0, cursor.getCount());
+        cursor.close();
+    }
+
+    public void testUpdateLocation() {
+        testDeleteAllRecords();
+
+        //Crear un nuevo mapa de valores, donde los nombres de columnas son las keys
+        ContentValues values = TestDb.createNorthPoleLocationValues();
+
+        Uri locationUri = mContext.getContentResolver().
+                insert(LocationEntry.CONTENT_URI, values);
+        long locationRowId = ContentUris.parseId(locationUri);
+
+        // Verificar que tenemos una columna de vuelta
+        assertTrue(locationRowId != -1);
+        Log.d(LOG_TAG, "Id de la nueva fila: " + locationRowId);
+
+        ContentValues updatedValues = new ContentValues(values);
+        updatedValues.put(LocationEntry._ID, locationRowId);
+        updatedValues.put(LocationEntry.COLUMN_CITY_NAME, "Santa's Village");
+
+        int count = mContext.getContentResolver().update(
+                LocationEntry.CONTENT_URI, updatedValues, LocationEntry._ID + "= ?",
+                new String[] { Long.toString(locationRowId)}
+        );
+
+        assertEquals(count, 0);
+
+        Cursor cursor = mContext.getContentResolver().query(
+                LocationEntry.buildLocationUri(locationRowId),
+                null,
+                null, // Columns for the "where" clause
+                null, // Values for the "where" clause
+                null // sort order
+        );
+
+        TestDb.validateCursor(cursor, updatedValues);
     }
 
     public void testGetType() {

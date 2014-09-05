@@ -234,12 +234,54 @@ public class WeatherProvider extends ContentProvider{
     }
 
     @Override
-    public int delete(Uri uri, String s, String[] strings) {
+    public int delete(Uri uri, String selection, String[] selectionArgs) {
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        final int match = sUriMatcher.match(uri);
+        int rowsDeleted;
+
+        switch (match){
+            case WEATHER: {
+                rowsDeleted = db.delete(WeatherContract.WeatherEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            }
+            case LOCATION: {
+                rowsDeleted = db.delete(WeatherContract.LocationEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            }
+            default:
+                throw new UnsupportedOperationException("Unknown Uri: " + uri);
+        }
+        //Because a null deletes all rows
+        if ( null == selection || 0 != rowsDeleted ){
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
         return 0;
     }
 
     @Override
-    public int update(Uri uri, ContentValues contentValues, String s, String[] strings) {
+    public int update(Uri uri, ContentValues contentValues, String selection, String[] selectionArgs) {
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        final int match = sUriMatcher.match(uri);
+        int rowsUpdated;
+
+        switch (match){
+            case WEATHER: {
+                rowsUpdated = db.update(WeatherContract.WeatherEntry.TABLE_NAME, contentValues,
+                        selection, selectionArgs);
+                break;
+            }
+            case LOCATION: {
+                rowsUpdated = db.update(WeatherContract.LocationEntry.TABLE_NAME, contentValues,
+                        selection, selectionArgs);
+                break;
+            }
+            default:
+                throw new UnsupportedOperationException("Unknown Uri: " + uri);
+        }
+        //Because a null deletes all rows
+        if ( 0 != rowsUpdated ){
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
         return 0;
     }
 }
