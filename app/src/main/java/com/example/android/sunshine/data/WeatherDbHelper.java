@@ -47,35 +47,6 @@ public class WeatherDbHelper extends SQLiteOpenHelper {
                 LocationEntry.COLUMN_COORD_LONG + " REAL NOT NULL, " +
                 "UNIQUE (" + LocationEntry.COLUMN_LOCATION_SETTING + ") ON CONFLICT IGNORE );";
 
-        final String SQL_CREATE_WEATHER_TABLE =
-                "CREATE TABLE " + WeatherEntry.TABLE_NAME + " (" +
-                        WeatherEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                WeatherEntry.COLUMN_LOC_KEY + " INTEGER NOT NULL, " +
-                WeatherEntry.COLUMN_DATETEXT + " TEXT NOT NULL, " +
-                WeatherEntry.COLUMN_SHORT_DESC + " TEXT NOT NULL, " +
-                WeatherEntry.COLUMN_WEATHER_ID + " INTEGER NOT NULL, " +
-
-                WeatherEntry.COLUMN_MIN_TEMP + " REAL NOT NULL, " +
-                WeatherEntry.COLUMN_MAX_TEMP + " REAL NOT NULL, " +
-
-                WeatherEntry.COLUMN_HUMIDITY + " REAL NOT NULL, " +
-                WeatherEntry.COLUMN_PRESSURE + " REAL NOT NULL, " +
-                WeatherEntry.COLUMN_WIND_SPEED + " REAL NOT NULL, " +
-                WeatherEntry.COLUMN_DEGREES + " REAL NOT NULL, " +
-
-                // Set up the location column as a foreign key to location table
-                " FOREIGN KEY (" + WeatherEntry.COLUMN_LOC_KEY + ") REFERENCES " +
-                LocationEntry.TABLE_NAME + " (" + LocationEntry._ID + "), " +
-
-                // To assure the aplication has just one weather entry per day
-                // per location, it's created a UNIQUE constraint with REPLACE strategy
-                " UNIQUE (" + WeatherEntry.COLUMN_DATETEXT + ", " +
-                WeatherEntry.COLUMN_LOC_KEY + ") ON CONFLICT REPLACE);";
-
-
-        /* TODO Uncomment for
-         4a - Create a Database for SQLiteOpenHelper
-         https://www.udacity.com/course/viewer#!/c-ud853/l-1639338560/m-1633698598
         final String SQL_CREATE_WEATHER_TABLE = "CREATE TABLE " + WeatherEntry.TABLE_NAME + " (" +
                 // Why AutoIncrement here, and not above?
                 // Unique keys will be auto-generated in either case.  But for weather
@@ -109,14 +80,10 @@ public class WeatherDbHelper extends SQLiteOpenHelper {
 
         sqLiteDatabase.execSQL(SQL_CREATE_LOCATION_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_WEATHER_TABLE);
-        */
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
-        /* TODO Uncomment for
-        4a - SQLiteOpenHelper onUpgrade() method
-        https://www.udacity.com/course/viewer#!/c-ud853/l-1639338560/m-1633698602
         // This database is only a cache for online data, so its upgrade policy is
         // to simply to discard the data and start over
         // Note that this only fires if you change the version number for your database.
@@ -126,6 +93,5 @@ public class WeatherDbHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + LocationEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + WeatherEntry.TABLE_NAME);
         onCreate(sqLiteDatabase);
-        */
     }
 }
