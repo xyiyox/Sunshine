@@ -1,72 +1,72 @@
-package com.example.android.sunshine.test;// /*
-//  * Copyright (C) 2014 The Android Open Source Project
-//  *
-//  * Licensed under the Apache License, Version 2.0 (the "License");
-//  * you may not use this file except in compliance with the License.
-//  * You may obtain a copy of the License at
-//  *
-//  *      http://www.apache.org/licenses/LICENSE-2.0
-//  *
-//  * Unless required by applicable law or agreed to in writing, software
-//  * distributed under the License is distributed on an "AS IS" BASIS,
-//  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  * See the License for the specific language governing permissions and
-//  * limitations under the License.
-//  */
-// package com.example.android.sunshine.app.test;
+/*
+  * Copyright (C) 2014 The Android Open Source Project
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  *      http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
+package com.example.android.sunshine.test;
 
-// import android.annotation.TargetApi;
-// import android.content.ContentUris;
-// import android.content.ContentValues;
-// import android.database.Cursor;
-// import android.net.Uri;
-// import android.os.Build;
-// import android.test.AndroidTestCase;
-// import android.util.Log;
-// import com.example.android.sunshine.app.data.WeatherContract.LocationEntry;
-// import com.example.android.sunshine.app.data.WeatherContract.WeatherEntry;
+import android.annotation.TargetApi;
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
+import android.test.AndroidTestCase;
+import android.util.Log;
+import com.example.android.sunshine.data.WeatherContract.LocationEntry;
+import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
 
-// public class TestProvider extends AndroidTestCase {
+public class TestProvider extends AndroidTestCase {
 
-//     public static final String LOG_TAG = TestProvider.class.getSimpleName();
+     public static final String LOG_TAG = TestProvider.class.getSimpleName();
 
-//     // brings our database to an empty state
-//     public void deleteAllRecords() {
-//         mContext.getContentResolver().delete(
-//                 WeatherEntry.CONTENT_URI,
-//                 null,
-//                 null
-//         );
-//         mContext.getContentResolver().delete(
-//                 LocationEntry.CONTENT_URI,
-//                 null,
-//                 null
-//         );
+     // brings our database to an empty state
+     public void deleteAllRecords() {
+         mContext.getContentResolver().delete(
+                 WeatherEntry.CONTENT_URI,
+                 null,
+                 null
+         );
+         mContext.getContentResolver().delete(
+                 LocationEntry.CONTENT_URI,
+                 null,
+                 null
+         );
 
-//         Cursor cursor = mContext.getContentResolver().query(
-//                 WeatherEntry.CONTENT_URI,
-//                 null,
-//                 null,
-//                 null,
-//                 null
-//         );
-//         assertEquals(0, cursor.getCount());
-//         cursor.close();
+         Cursor cursor = mContext.getContentResolver().query(
+                 WeatherEntry.CONTENT_URI,
+                 null,
+                 null,
+                 null,
+                 null
+         );
+         assertEquals(0, cursor.getCount());
+         cursor.close();
 
-//         /* TODO Uncomment for
-//         4b - Implement Location_ID queries
-//         https://www.udacity.com/course/viewer#!/c-ud853/l-1576308909/e-1675098551/m-1675098552
-//         cursor = mContext.getContentResolver().query(
-//                 LocationEntry.CONTENT_URI,
-//                 null,
-//                 null,
-//                 null,
-//                 null
-//         );
-//         assertEquals(0, cursor.getCount());
-//         cursor.close();
-//         */
-//     }
+         /* TODO Uncomment for
+         4b - Implement Location_ID queries
+         https://www.udacity.com/course/viewer#!/c-ud853/l-1576308909/e-1675098551/m-1675098552
+         cursor = mContext.getContentResolver().query(
+                 LocationEntry.CONTENT_URI,
+                 null,
+                 null,
+                 null,
+                 null
+         );
+         assertEquals(0, cursor.getCount());
+         cursor.close();
+         */
+     }
 
 //     // Since we want each test to start with a clean slate, run deleteAllRecords
 //     // in setUp (called by the test runner before each test).
@@ -305,4 +305,4 @@ package com.example.android.sunshine.test;// /*
 //                 .insert(WeatherEntry.CONTENT_URI, kalamazooWeatherValues);
 //         assertTrue(weatherInsertUri != null);
 //     }
-// }
+}
