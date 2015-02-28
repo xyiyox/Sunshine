@@ -1,8 +1,12 @@
 package com.example.android.sunshine;
 
+import android.app.LoaderManager;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.ShareActionProvider;
@@ -14,6 +18,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
 
 public class DetailActivity extends ActionBarActivity {
 
@@ -51,11 +57,30 @@ public class DetailActivity extends ActionBarActivity {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class DetailFragment extends Fragment {
+    public static class DetailFragment extends Fragment implements LoaderCallbacks<Cursor> {
 
         private static final String LOG_TAG = DetailFragment.class.getSimpleName();
         private static final String FORECAST_SHARE_HASHTAG = " #SunshineApp";
+        private ShareActionProvider mShareActionProvider;
         private String mForecastStr;
+
+        private static final int DETAIL_LOADER = 0;
+
+        private static final String[] FORECAST_COLUMNS = {
+                WeatherEntry.TABLE_NAME + "." + WeatherEntry._ID,
+                WeatherEntry.COLUMN_DATE,
+                WeatherEntry.COLUMN_SHORT_DESC,
+                WeatherEntry.COLUMN_MAX_TEMP,
+                WeatherEntry.COLUMN_MIN_TEMP
+        };
+
+        // Estas constantes corresponden a la proyeccion definida antes, y debe ser cambiada si
+        // la proyeccion cambia
+        private static final int COL_WEATHER_ID = 0;
+        private static final int COL_WEATHER_DATE = 1;
+        private static final int COL_WEATHER_DESC = 2;
+        private static final int COL_WEATHER_MAX = 3;
+        private static final int COL_WEATHER_MIN = 4;
 
         public DetailFragment() {
             setHasOptionsMenu(true);
@@ -69,13 +94,13 @@ public class DetailActivity extends ActionBarActivity {
             //Recuperar el item de menu "Compartir"
             MenuItem menuItem = menu.findItem(R.id.action_share);
 
-            ShareActionProvider mShareActionProvider =
-                    (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+            // Obtener el provider y aferrarse a el para configurar/cambiar el intent compartido
+            mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
 
-            if (mShareActionProvider != null){
+            // Si onLoadFinished ocurre antes que esto, nosotros podemos fijar el intento
+            // compartido ahora
+            if (mForecastStr != null){
                 mShareActionProvider.setShareIntent(createShareForecastIntent());
-            } else {
-                Log.d(LOG_TAG, "Share action provider intent is null?");
             }
         }
 
@@ -106,6 +131,53 @@ public class DetailActivity extends ActionBarActivity {
             shareIntent.putExtra(Intent.EXTRA_TEXT,
                     mForecastStr + FORECAST_SHARE_HASHTAG);
             return shareIntent;
+        }
+
+        @Override
+        public void onActivityCreated(Bundle savedInstanceState) {
+            getLoaderManager().initLoader(DETAIL_LOADER, null, this);
+            super.onActivityCreated(savedInstanceState);
+        }
+
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            Log.v(LOG_TAG, "In onCreateLoader");
+            Intent intent = getActivity().getIntent();
+            if (intent == null) {
+                return null;
+            }
+
+            // Ahora crea y retorna un CursorLoader que se va a encargar de crear un cursor
+            // para los datos que van a ser mostrados
+            return new CursorLoader(getActivity(), intent.getData(), FORECAST_COLUMNS, null,
+                    null, null);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            Log.v(LOG_TAG, "In onLoadFinished");
+            if (!data.moveToFirst()) { return; }
+
+            String dateString = Utility.formatDate(data.getLong(COL_WEATHER_DATE));
+            String weatherDescription = data.getString(COL_WEATHER_DESC);
+            boolean isMetric = Utility.isMetric(getActivity());
+            String high = Utility.formatTemperature(data.getDouble(COL_WEATHER_MAX), isMetric);
+            String low = Utility.formatTemperature(data.getDouble(COL_WEATHER_MIN), isMetric);
+
+            mForecastStr = String.format("%s - %s - %s/%s", dateString, weatherDescription, high,low);
+
+            TextView detailTextView = (TextView) getView().findViewById(R.id.detail_text);
+            detailTextView.setText(mForecastStr);
+
+            // Si onCreateOptionsMenu ha ocurrido, necesitamos actualizar el intento compartido
+            if (mShareActionProvider != null) {
+                mShareActionProvider.setShareIntent(createShareForecastIntent());
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+
         }
     }
 }
