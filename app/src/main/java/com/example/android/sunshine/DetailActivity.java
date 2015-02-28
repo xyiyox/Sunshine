@@ -84,11 +84,11 @@ public class DetailActivity extends ActionBarActivity {
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
-            //El detalle de la Actividad es llamado a traves de un Intent
-            //Extraemos el forecast de este Intent
+            // El detalle de la Actividad es llamado a traves de un Intent
+            // Se inspecciona el intent buscando forecast data
             Intent intent = getActivity().getIntent();
-            if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)){
-                mForecastStr = intent.getStringExtra(Intent.EXTRA_TEXT);
+            if (intent != null) {
+                mForecastStr = intent.getDataString();
             }
 
             if (null != mForecastStr) {
