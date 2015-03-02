@@ -1,10 +1,10 @@
 package com.example.android.sunshine;
 
-import android.app.LoaderManager;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
@@ -18,7 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
+
 import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
 
 public class DetailActivity extends ActionBarActivity {
@@ -161,8 +161,10 @@ public class DetailActivity extends ActionBarActivity {
             String dateString = Utility.formatDate(data.getLong(COL_WEATHER_DATE));
             String weatherDescription = data.getString(COL_WEATHER_DESC);
             boolean isMetric = Utility.isMetric(getActivity());
-            String high = Utility.formatTemperature(data.getDouble(COL_WEATHER_MAX), isMetric);
-            String low = Utility.formatTemperature(data.getDouble(COL_WEATHER_MIN), isMetric);
+            String high = Utility.formatTemperature(getActivity(), data.getDouble(COL_WEATHER_MAX),
+                    isMetric);
+            String low = Utility.formatTemperature(getActivity(), data.getDouble(COL_WEATHER_MIN),
+                    isMetric);
 
             mForecastStr = String.format("%s - %s - %s/%s", dateString, weatherDescription, high,low);
 
