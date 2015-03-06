@@ -16,22 +16,24 @@
     <!-- Nombre de la ciudad por defecto que sera localizada [CHAR LIMIT=NONE] -->
     <string name="pref_location_default" translatable="false">Armenia</string>
 
+    <!-- Strings for formatting weather-related data -->
+
     <string name="pref_units_label">Unidades de Temperatura</string>
     <string name="pref_units_key" translatable="false">units</string>
-    <string name="pref_units_metric">Metric</string>
-    <string name="pref_units_imperial">Imperial</string>
+    <string name="pref_units_metric" translatable="false">Metric</string>
+    <string name="pref_units_imperial" translatable="false">Imperial</string>
 
     <string name="action_map">Ubicación en Mapa</string>
     <string name="action_share">Compartir</string>
 
-    <!-- Date label when displaying today's weather forecast [CHAR LIMIT=20] -->
+    <!-- Language-specific constants -->
     <string name="today">Hoy</string>
 
-    <!-- Date label when displaying tomorrow's weather forecast [CHAR LIMIT=20] -->
+    <!-- For labelling tomorrow's forecast [CHAR LIMIT=15] -->
     <string name="tomorrow">Mañana</string>
 
-    <!-- Date format for displaying day of week and date (i.e. Mon Jun 1) [CHAR LIMIT=20] -->
-    <string name="format_full_friendly_date"><xliff:g id="day">%1$s</xliff:g>, <xliff:g id="date">%2$s</xliff:g></string>
+    <!-- Date format [CHAR LIMIT=NONE] -->
+    <string name="format_full_friendly_date"><xliff:g id="month">%1$s</xliff:g>, <xliff:g id="day">%2$s</xliff:g></string>
 
     <!-- Strings for formatting weather-related data -->
     <!-- Temperature format [CHAR LIMIT=5] -->
